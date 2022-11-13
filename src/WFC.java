@@ -37,27 +37,12 @@ public class WFC<T> {
     }
 
     public List<T> generate(List<Optional<T>> in){
-        int collapsedCounter = 0;
-        List<T> out = new LinkedList<>();
-        for (Optional<T> opt: in) {
-            if(opt.isPresent()){
-                out.add(opt.get());
-                collapsedCounter++;
-            } else {
-                out.add(null);
-            }
-        }
 
-        PriorityQueue<Integer> pq = queueIndices(in);
-        while(collapsedCounter < in.size()){
-            int i = pq.remove();
-            if(in.get(i).isPresent()) continue;
+        WFCCanvas<T> canvas = new WFCCanvas<>(this, in);
 
-            T collapsedItem = collapse(in, i);
-            out.set(i, collapsedItem);
-            collapsedCounter++;
-        }
-        return out;
+        while (canvas.collapseNext());
+
+        return canvas.output();
     }
 
     /**
